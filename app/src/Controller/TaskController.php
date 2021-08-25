@@ -5,8 +5,11 @@ namespace App\Controller;
 use App\Entity\Task;
 use App\Entity\User;
 use App\Form\TaskType;
+use App\Repository\TaskRepository;
+use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route(name: 'app_')]
@@ -15,17 +18,17 @@ class TaskController extends AbstractController
     /**
      * @Route("/tasks", name="task_list")
      */
-    public function listAction()
+    public function listAction(TaskRepository $taskRepository): Response
     {
         return $this->render('task/list.html.twig',
-            ['tasks' => $this->getDoctrine()->getRepository('App:Task')->findAll()]
+            ['tasks' => $taskRepository->findAll()]
         );
     }
 
     /**
      * @Route("/tasks/create", name="task_create")
      */
-    public function createAction(Request $request)
+    public function createAction(Request $request, UserRepository $userRepository)
     {
         $task = new Task();
         $form = $this->createForm(TaskType::class, $task);
@@ -34,7 +37,12 @@ class TaskController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var User $user */
-            $user = $this->getUser();
+            $user = $userRepository->find(0);
+            if ($this->getUser())
+            {
+                $user = $this->getUser();
+            }
+
             $task->setAuthor($user);
             $em = $this->getDoctrine()->getManager();
 
@@ -58,7 +66,7 @@ class TaskController extends AbstractController
 
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $this->getDoctrine()->getManager()->flush();
 
             $this->addFlash('success', 'La tâche a bien été modifiée.');

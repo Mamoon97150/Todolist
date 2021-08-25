@@ -25,7 +25,14 @@ class AppFixtures extends Fixture
 
     public function load(ObjectManager $manager)
     {
-        for ($i = 0; $i < 10; $i++) {
+        $user = new User();
+        $user->setUsername("Anonymous")
+            ->setEmail("anonymous@fake.com")
+            ->setPassword($this->passwordHasher->hashPassword($user, ""))
+        ;
+        $manager->persist($user);
+
+        for ($i = 0; $i < 9; $i++) {
             $user = new User();
             $user->setUsername(sprintf("User%d", $i))
                 ->setEmail(sprintf("user%d", $i)."@fake.com")
@@ -33,6 +40,7 @@ class AppFixtures extends Fixture
             ;
             $manager->persist($user);
         }
+
         $manager->flush();
     }
 }
