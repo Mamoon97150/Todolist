@@ -46,6 +46,7 @@ class Task
     public function __construct()
     {
         $this->isDone = false;
+        $this->createdAt = date_create_immutable();
     }
 
     public function getId(): ?int
@@ -103,11 +104,5 @@ class Task
     {
         return $this->createdAt;
     }
-
-    public function setCreatedAt(\DateTimeImmutable $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
+    
 }

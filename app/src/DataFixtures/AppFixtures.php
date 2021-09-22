@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Task;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
@@ -25,12 +26,13 @@ class AppFixtures extends Fixture
 
     public function load(ObjectManager $manager)
     {
-        $user = new User();
-        $user->setUsername("Anonymous")
+        $anon = new User();
+        $anon->setUsername("Anonymous")
             ->setEmail("anonymous@fake.com")
-            ->setPassword($this->passwordHasher->hashPassword($user, ""))
+            ->setPassword($this->passwordHasher->hashPassword($anon, ""))
         ;
-        $manager->persist($user);
+        $manager->persist($anon);
+
 
         for ($i = 0; $i < 9; $i++) {
             $user = new User();
@@ -39,8 +41,17 @@ class AppFixtures extends Fixture
                 ->setPassword($this->passwordHasher->hashPassword($user, "password"))
             ;
             $manager->persist($user);
+            $users[] = $user;
         }
 
+        for ($i = 0; $i < 20; $i++) {
+            $task = new Task();
+            $task->setTitle(sprintf("Task %d", $i+1))
+                ->setContent(sprintf("Content for Task %d", $i+1))
+                ->setAuthor($anon);
+
+            $manager->persist($task);
+        }
         $manager->flush();
     }
 }
