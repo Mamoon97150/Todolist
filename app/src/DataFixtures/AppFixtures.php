@@ -33,6 +33,13 @@ class AppFixtures extends Fixture
         ;
         $manager->persist($anon);
 
+        $admin = new User();
+        $admin->setUsername("Admin")
+            ->setEmail("admin@fake.com")
+            ->setPassword($this->passwordHasher->hashPassword($admin, "admin"))
+            ->setRoles(['ROLE_ADMIN'])
+        ;
+        $manager->persist($admin);
 
         for ($i = 0; $i < 9; $i++) {
             $user = new User();
