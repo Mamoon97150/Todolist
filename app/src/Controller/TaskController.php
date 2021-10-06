@@ -40,7 +40,7 @@ class TaskController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
             $user = $userRepository->find(1);
-            if ( isNull($this->getUser()) )
+            if (!isNull($this->getUser()) )
             {
                 $user = $this->getUser();
             }

@@ -16,7 +16,7 @@ class UserController extends AbstractController
     /**
      * @Route("/users", name="user_list")
      */
-    public function listAction(UserRepository $userRepository)
+    public function listUsers(UserRepository $userRepository)
     {
         $this->denyAccessUnlessGranted("ROLE_ADMIN");
         return $this->render('user/list.html.twig', ['users' => $userRepository->findAll()]);
@@ -25,7 +25,7 @@ class UserController extends AbstractController
     /**
      * @Route("/users/create", name="user_create")
      */
-    public function createAction(Request $request, UserPasswordHasherInterface $hasher)
+    public function createUser(Request $request, UserPasswordHasherInterface $hasher)
     {
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
@@ -51,7 +51,7 @@ class UserController extends AbstractController
     /**
      * @Route("/users/{id}/edit", name="user_edit")
      */
-    public function editAction(User $user, Request $request, UserPasswordHasherInterface $hasher)
+    public function editUser(User $user, Request $request, UserPasswordHasherInterface $hasher)
     {
         $this->denyAccessUnlessGranted('edit', $user);
 
@@ -59,6 +59,8 @@ class UserController extends AbstractController
 
         $form->handleRequest($request);
 
+
+        //Add event listener for password hashing
         if ($form->isSubmitted() && $form->isValid()) {
             $password = $hasher->hashPassword($user, $form->get('password')->getData());
             $user->setPassword($password);
