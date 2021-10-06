@@ -1,0 +1,12 @@
+App\Entity\User:
+  user:
+    username: User
+    email: user\@fake.com
+    password: password
+    roles: ['ROLE_ADMIN']
+
+App\Entity\Task:
+  Task:
+    title: Task
+    content: 'Task test'
+    author: '@user'

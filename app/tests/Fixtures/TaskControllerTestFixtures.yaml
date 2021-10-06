@@ -1,0 +1,18 @@
+App\Entity\User:
+  user:
+    username: User0
+    email: user0\@fake.com
+    password: password
+    roles: ['ROLE_ADMIN']
+
+  user2:
+    username: User1
+    email: user1\@fake.com
+    password: password
+    roles: ['ROLE_USER']
+
+App\Entity\Task:
+  Task{1..10}:
+    title: Task <current()>
+    content: 'Task test <current()>'
+    author: '@user'
