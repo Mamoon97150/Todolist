@@ -38,11 +38,10 @@ class TaskController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
-            $user = $userRepository->find(1);
-            if (!isNull($this->getUser()) )
+            $user = $this->getUser();
+            if (is_null($user) )
             {
-                $user = $this->getUser();
+                $user = $userRepository->find(1);
             }
 
             $task->setAuthor($user);
@@ -65,6 +64,7 @@ class TaskController extends AbstractController
      */
     public function editTask(Task $task, Request $request): RedirectResponse|Response
     {
+        $this->denyAccessUnlessGranted('own', $task);
         $form = $this->createForm(TaskType::class, $task);
 
         $form->handleRequest($request);

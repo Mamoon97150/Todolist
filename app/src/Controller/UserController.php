@@ -7,8 +7,10 @@ use App\Form\UserType;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route(name: 'app_')]
 class UserController extends AbstractController
@@ -33,16 +35,15 @@ class UserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $user = $form->getData();
             $em = $this->getDoctrine()->getManager();
-            $password = $hasher->hashPassword($user, $form->get('password')->getData());
-            $user->setPassword($password);
 
             $em->persist($user);
             $em->flush();
 
             $this->addFlash('success', "L'utilisateur a bien été ajouté.");
 
-            return $this->redirectToRoute('user_list');
+            return $this->redirectToRoute('app_homepage');
         }
 
         return $this->render('user/create.html.twig', ['form' => $form->createView()]);
@@ -51,25 +52,24 @@ class UserController extends AbstractController
     /**
      * @Route("/users/{id}/edit", name="user_edit")
      */
-    public function editUser(User $user, Request $request, UserPasswordHasherInterface $hasher)
+    public function editUser(User $user, Request $request, UserPasswordHasherInterface $hasher, ValidatorInterface $validator)
     {
         $this->denyAccessUnlessGranted('edit', $user);
+
 
         $form = $this->createForm(UserType::class, $user);
 
         $form->handleRequest($request);
-
-
-        //Add event listener for password hashing
+        //TODO: check why password error doesnt show on page
         if ($form->isSubmitted() && $form->isValid()) {
-            $password = $hasher->hashPassword($user, $form->get('password')->getData());
-            $user->setPassword($password);
+
+            $user = $form->getData();
 
             $this->getDoctrine()->getManager()->flush();
 
             $this->addFlash('success', "L'utilisateur a bien été modifié");
 
-            return $this->redirectToRoute('app_user_list');
+            return $this->redirectToRoute('app_homepage');
         }
 
         return $this->render('user/edit.html.twig', ['form' => $form->createView(), 'user' => $user]);
