@@ -29,14 +29,14 @@ class AppFixtures extends Fixture
         $anon = new User();
         $anon->setUsername("Anonymous")
             ->setEmail("anonymous@fake.com")
-            ->setPassword($this->passwordHasher->hashPassword($anon, ""))
+            ->setPassword("")
         ;
         $manager->persist($anon);
 
         $admin = new User();
         $admin->setUsername("Admin")
             ->setEmail("admin@fake.com")
-            ->setPassword($this->passwordHasher->hashPassword($admin, "admin"))
+            ->setPassword("admin")
             ->setRoles(['ROLE_ADMIN'])
         ;
         $manager->persist($admin);
@@ -45,7 +45,7 @@ class AppFixtures extends Fixture
             $user = new User();
             $user->setUsername(sprintf("User%d", $i))
                 ->setEmail(sprintf("user%d", $i)."@fake.com")
-                ->setPassword($this->passwordHasher->hashPassword($user, "password"))
+                ->setPassword("password")
             ;
             $manager->persist($user);
             $users[] = $user;
