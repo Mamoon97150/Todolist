@@ -26,7 +26,7 @@ class UserControllerTest extends WebTestCase
     {
         $this->databaseTool->loadAliceFixture([
             dirname(__DIR__).'/Fixtures/UserListTestFixture.yaml'
-        ], false);
+        ]);
 
         $userRepository = static::getContainer()->get(UserRepository::class);
 
@@ -42,7 +42,7 @@ class UserControllerTest extends WebTestCase
     {
         $this->databaseTool->loadAliceFixture([
             dirname(__DIR__).'/Fixtures/UserListTestFixture.yaml'
-        ], false);
+        ]);
 
         $userRepository = static::getContainer()->get(UserRepository::class);
 
@@ -56,27 +56,28 @@ class UserControllerTest extends WebTestCase
 
     public function testCreateUserWorks()
     {
-
         $crawler = $this->client->request('GET', '/users/create');
         $form = $crawler->selectButton('Ajouter')->form([
-            "user[username]" => "User",
+            "user[username]" => "User4",
             "user[password][first]" => "password",
             "user[password][second]" => "password",
             "user[email]" => "user@fake.com"
         ]);
         $this->client->submit($form);
 
-
-
-        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
-
+        $this->assertResponseRedirects("/");
+        $this->client->followRedirect();
+        $this->assertSelectorExists(".alert.alert-success");
     }
 
     public function testCreateUserFails()
     {
         $crawler = $this->client->request('GET', '/users/create');
         $form = $crawler->selectButton('Ajouter')->form([
-            "user[username]" => ""
+            "user[username]" => "",
+            "user[password][first]" => "",
+            "user[password][second]" => "",
+            "user[email]" => ""
         ]);
         $this->client->submit($form);
 
@@ -97,14 +98,14 @@ class UserControllerTest extends WebTestCase
 
         $crawler = $this->client->request('GET', '/users/2/edit');
         $form = $crawler->selectButton('Modifier')->form([
-            "user[username]" => "Test",
+            "user[username]" => "Tester",
             "user[password][first]" => "password2",
             "user[password][second]" => "password2",
             "user[email]" => "user@fake.com"
         ]);
+
         $this->client->submit($form);
 
-        //TODO: WHYYYYYYY ?
         $this->assertResponseRedirects("/");
         $this->client->followRedirect();
         $this->assertSelectorExists(".alert.alert-success");

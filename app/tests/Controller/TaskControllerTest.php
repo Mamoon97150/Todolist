@@ -57,6 +57,7 @@ class TaskControllerTest extends WebTestCase
             "task[title]" => "Task test 2",
             "task[content]" => "Content for task test 2",
         ]);
+
         $this->client->submit($form);
 
         $this->assertResponseRedirects('/tasks');
@@ -64,7 +65,6 @@ class TaskControllerTest extends WebTestCase
         $this->assertSelectorExists(".alert.alert-success");
     }
 
-    //todo: check why fails
     public function testTaskCreationFails()
     {
         $this->databaseTool->loadAliceFixture([
@@ -83,7 +83,7 @@ class TaskControllerTest extends WebTestCase
         ]);
         $this->client->submit($form);
 
-        $this->assertResponseStatusCodeSame(Response::HTTP_INTERNAL_SERVER_ERROR);
+        $this->assertSelectorExists(".form-error-message");
 
     }
 
@@ -129,15 +129,15 @@ class TaskControllerTest extends WebTestCase
 
         $crawler = $this->client->request('GET', '/tasks/1/edit');
         $form = $crawler->selectButton('Modifier')->form([
-            "task[title]" => ""
+            "task[title]" => "",
+            "task[content]" => ""
         ]);
         $this->client->submit($form);
 
-        $this->assertResponseStatusCodeSame(Response::HTTP_INTERNAL_SERVER_ERROR);
+        $this->assertSelectorExists(".form-error-message");
 
     }
 
-    //TODO: finish addinf fail scenario
     public function testTaskToggleWorks()
     {
         $this->databaseTool->loadAliceFixture([
@@ -150,7 +150,7 @@ class TaskControllerTest extends WebTestCase
         $this->client->loginUser($testUser);
         $this->client->request('GET', '/tasks');
 
-        $crawler = $this->client->submitForm('Marquer comme faite');
+        $this->client->submitForm('Marquer comme faite');
 
         $this->assertResponseRedirects();
         $this->client->followRedirect();
@@ -170,7 +170,7 @@ class TaskControllerTest extends WebTestCase
         $this->client->loginUser($testUser);
         $this->client->request('GET', '/tasks');
 
-        $crawler = $this->client->submitForm('Supprimer');
+        $this->client->submitForm('Supprimer');
 
         $this->assertResponseRedirects();
         $this->client->followRedirect();
@@ -190,7 +190,7 @@ class TaskControllerTest extends WebTestCase
         $this->client->loginUser($testUser);
         $this->client->request('GET', '/tasks');
 
-        $crawler = $this->client->submitForm('Supprimer');
+        $this->client->submitForm('Supprimer');
 
         $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
 

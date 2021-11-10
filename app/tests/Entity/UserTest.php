@@ -24,7 +24,7 @@ class UserTest extends KernelTestCase
 
     public function getUserEntity(): User
     {
-        return $user = (new User())
+        return (new User())
             ->setUsername("Tester")
             ->setEmail("test@test.com")
             ->setPassword("password")
