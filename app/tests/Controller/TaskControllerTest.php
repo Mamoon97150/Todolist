@@ -33,6 +33,14 @@ class TaskControllerTest extends WebTestCase
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
     }
 
+    public function testTaskListFails()
+    {
+        $this->client->request('GET', '/task');
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+        $this->assertEquals(404, $this->client->getResponse()->getStatusCode());
+    }
+
     public function testTaskCreationWorks()
     {
         $this->databaseTool->loadAliceFixture([
@@ -56,7 +64,8 @@ class TaskControllerTest extends WebTestCase
         $this->assertSelectorExists(".alert.alert-success");
     }
 
-    public function testTaskModificationWorks()
+    //todo: check why fails
+    public function testTaskCreationFails()
     {
         $this->databaseTool->loadAliceFixture([
             dirname(__DIR__).'/Fixtures/TaskControllerTestFixtures.yaml'
@@ -67,12 +76,36 @@ class TaskControllerTest extends WebTestCase
         $testUser = $userRepository->findOneBy(['username' => 'User1']);
         $this->client->loginUser($testUser);
 
+        $crawler = $this->client->request('GET', '/tasks/create');
+        $form = $crawler->selectButton('Ajouter')->form([
+            "task[title]" => "",
+            "task[content]" => ""
+        ]);
+        $this->client->submit($form);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_INTERNAL_SERVER_ERROR);
+
+    }
+
+    public function testTaskModificationWorks()
+    {
+        $this->databaseTool->loadAliceFixture([
+            dirname(__DIR__).'/Fixtures/TaskControllerTestFixtures.yaml'
+        ], false);
+
+        $userRepository = static::getContainer()->get(UserRepository::class);
+
+        $testUser = $userRepository->findOneBy(['username' => 'User0']);
+        $this->client->loginUser($testUser);
+
         $crawler = $this->client->request('GET', '/tasks/1/edit');
         $form = $crawler->selectButton('Modifier')->form([
             "task[title]" => "Task test 2",
             "task[content]" => "Content for task test 2"
         ]);
         $this->client->submit($form);
+
+        $this->assertTrue($this->client->getResponse()->isRedirect());
 
         $this->assertResponseRedirects('/tasks');
         $this->client->followRedirect();
@@ -81,6 +114,30 @@ class TaskControllerTest extends WebTestCase
 
     }
 
+
+
+    public function testTaskModificationFails()
+    {
+        $this->databaseTool->loadAliceFixture([
+            dirname(__DIR__).'/Fixtures/TaskControllerTestFixtures.yaml'
+        ], false);
+
+        $userRepository = static::getContainer()->get(UserRepository::class);
+
+        $testUser = $userRepository->findOneBy(['username' => 'User0']);
+        $this->client->loginUser($testUser);
+
+        $crawler = $this->client->request('GET', '/tasks/1/edit');
+        $form = $crawler->selectButton('Modifier')->form([
+            "task[title]" => ""
+        ]);
+        $this->client->submit($form);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_INTERNAL_SERVER_ERROR);
+
+    }
+
+    //TODO: finish addinf fail scenario
     public function testTaskToggleWorks()
     {
         $this->databaseTool->loadAliceFixture([
@@ -99,6 +156,7 @@ class TaskControllerTest extends WebTestCase
         $this->client->followRedirect();
         $this->assertSelectorExists(".alert.alert-success");
     }
+
 
     public function testTaskDeletionWorks()
     {
@@ -120,4 +178,21 @@ class TaskControllerTest extends WebTestCase
 
     }
 
+    public function testTaskDeletionFails()
+    {
+        $this->databaseTool->loadAliceFixture([
+            dirname(__DIR__).'/Fixtures/OneTaskTestFixture.yaml'
+        ], false);
+
+        $userRepository = static::getContainer()->get(UserRepository::class);
+
+        $testUser = $userRepository->findOneBy(['username' => 'User2']);
+        $this->client->loginUser($testUser);
+        $this->client->request('GET', '/tasks');
+
+        $crawler = $this->client->submitForm('Supprimer');
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+
+    }
 }

@@ -4,12 +4,14 @@ namespace App\Tests\Repository;
 
 use App\DataFixtures\AppFixtures;
 use App\Entity\User;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManager;
 use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
 use Liip\TestFixturesBundle\Services\DatabaseTools\AbstractDatabaseTool;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class UserRepositoryTest extends KernelTestCase
+class UserRepositoryTest extends WebTestCase
 {
 
     protected AbstractDatabaseTool $databaseTool;
@@ -36,8 +38,5 @@ class UserRepositoryTest extends KernelTestCase
         $users = $this->manager->getRepository(User::class)->count([]);
 
         $this->assertEquals(10, $users);
-
-
-
     }
 }

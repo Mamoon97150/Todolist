@@ -1,7 +1,7 @@
 App\Entity\User:
-  user:
-    username: User
-    email: user\@fake.com
+  user1:
+    username: User1
+    email: user1\@fake.com
     password: password
     roles: ['ROLE_ADMIN']
 
@@ -11,8 +11,3 @@ App\Entity\User:
     password: password
     roles: [ 'ROLE_USER' ]
 
-App\Entity\Task:
-  Task:
-    title: Task
-    content: 'Task test'
-    author: '@user'
