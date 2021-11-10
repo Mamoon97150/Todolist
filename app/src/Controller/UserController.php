@@ -27,7 +27,7 @@ class UserController extends AbstractController
     /**
      * @Route("/users/create", name="user_create")
      */
-    public function createUser(Request $request, UserPasswordHasherInterface $hasher)
+    public function createUser(Request $request)
     {
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
@@ -52,7 +52,7 @@ class UserController extends AbstractController
     /**
      * @Route("/users/{id}/edit", name="user_edit")
      */
-    public function editUser(User $user, Request $request, UserPasswordHasherInterface $hasher, ValidatorInterface $validator)
+    public function editUser(User $user, Request $request, ValidatorInterface $validator)
     {
         $this->denyAccessUnlessGranted('edit', $user);
 
@@ -60,7 +60,7 @@ class UserController extends AbstractController
         $form = $this->createForm(UserType::class, $user);
 
         $form->handleRequest($request);
-        //TODO: check why password error doesnt show on page
+
         if ($form->isSubmitted() && $form->isValid()) {
 
             $user = $form->getData();

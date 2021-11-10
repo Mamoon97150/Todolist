@@ -63,6 +63,12 @@ class UserVoter extends Voter
 
     private function canEdit(User $userDetails, UserInterface|User $user): bool
     {
+        //dd($userDetails, $user);
+
+        if ($user !== $userDetails)
+        {
+            return false;
+        }
         return true;
     }
 }
