@@ -26,7 +26,7 @@ class PasswordHasher
 
     public function preUpdate(User $user, LifecycleEventArgs $event){
 
-        if (!isNull($user->getPassword())){
+        if ($user->getPassword()){
             $hashed = $this->hasher->hashPassword($user, $user->getPassword());
             $user->setPassword($hashed);
         }

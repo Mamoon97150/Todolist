@@ -122,7 +122,7 @@ class UserControllerTest extends WebTestCase
         $testUser = $userRepository->findOneBy(['username' => 'User2']);
         $this->client->loginUser($testUser);
 
-        $crawler = $this->client->request('GET', '/users/1/edit');
+        $crawler = $this->client->request('GET', '/users/2/edit');
         $form = $crawler->selectButton('Modifier')->form([
             "user[username]" => "Test",
             "user[password][first]" => "",
