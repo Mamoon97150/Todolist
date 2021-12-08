@@ -6,7 +6,7 @@ Notre code est écrit dans le respect de la convention PSR-12, pour toute collab
 
 ##     Règle de participation au GitHub
 
-Afin de collaborer sur le GitHub, il sera nécessaire a tout utilisateur de crée sa branche et de crée un pull request qui sera évalué avant tout ajouts.
+Afin de collaborer sur le GitHub, il faudra utiliser les principes de GitFlow ( une nouvelle branche pour chaque nouvelle fonctionnalité ).
 
 ##     Reduction de la dette technique
 
@@ -20,4 +20,6 @@ Afin de réduire au maximum la dette technique nous avons choisi de développer 
 
 -     Mettre à jour le design
 
--     Ajouter une timestamp
+-     Ajouter une timestamp a chaque tâche
+
+-     Ajouter une pipeline d'intégration continu
