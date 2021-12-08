@@ -14,8 +14,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(name="`user`")
- * @UniqueEntity("email")
- * @UniqueEntity("username")
+ * @UniqueEntity("username", message="Ce nom d'utilisateur est déja utilisé !")
+ * @UniqueEntity("email", message="Cette adresse email est déjà utilisé !")
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -27,8 +27,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $id;
 
     /**
+     * @ORM\Column(type="string", length=25, unique=true)
+     * @Assert\Length(min=5, minMessage="Ce nom d'utilisateur est trop court")
+     * @Assert\NotBlank(message="Ce champ ne peut pas être vide")
+     */
+    private $username;
+
+    /**
      * @ORM\Column(type="string", length=180, unique=true)
-     * @Assert\NotBlank()
+     * @Assert\NotBlank(message="Ce champ ne peut pas être vide")
      * @Assert\Email()
      */
     private $email;
@@ -41,17 +48,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
-     * @Assert\Length(min=5)
-     * @Assert\NotBlank()
+     * @Assert\Length(min=5, minMessage="Ce mot de passe est trop court")
+     * @Assert\NotBlank(message="Ce champ ne peut pas être vide")
      */
     private $password;
-
-    /**
-     * @ORM\Column(type="string", length=25, unique=true)
-     * @Assert\Length(min=5)
-     * @Assert\NotBlank()
-     */
-    private $username;
 
     /**
      * @ORM\OneToMany(targetEntity=Task::class, mappedBy="author")
@@ -87,7 +87,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        return (string) $this->username;
     }
 
     /**
@@ -95,7 +95,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUsername(): string
     {
-        return (string) $this->email;
+        return (string) $this->username;
     }
 
     /**

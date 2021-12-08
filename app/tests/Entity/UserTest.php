@@ -13,7 +13,6 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class UserTest extends KernelTestCase
 {
 
-    //TODO: validator dependency injection
     protected AbstractDatabaseTool $databaseTool;
 
     public function setUp(): void
@@ -25,7 +24,7 @@ class UserTest extends KernelTestCase
 
     public function getUserEntity(): User
     {
-        return $user = (new User())
+        return (new User())
             ->setUsername("Tester")
             ->setEmail("test@test.com")
             ->setPassword("password")
@@ -35,7 +34,7 @@ class UserTest extends KernelTestCase
     public function assertHasErrors(User $user, int $number = 0)
     {
         self::bootKernel();
-        $errors = self::getContainer()->get('validator')->validate($user);
+        $errors = self::getContainer()->get(ValidatorInterface::class)->validate($user);
         $message = [];
 
         /** @var ConstraintViolation $error */

@@ -7,23 +7,26 @@ use Symfony\Component\HttpFoundation\Response;
 
 class DefaultControllerTest extends WebTestCase
 {
-    public function testIndexTrue()
+    public function testIndexWorks()
     {
         $client = static::createClient();
 
-        $crawler = $client->request('GET', '/');
+        $client->request('GET', '/');
 
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertSelectorTextContains('h1','Bienvenue sur Todo List');
+
     }
 
-    public function testIndexContains()
+    public function testIndexDoesNotWorks()
     {
         $client = static::createClient();
 
-        $crawler = $client->request('GET', '/');
+        $client->request('GET', '/index');
 
-        $this->assertSelectorTextContains('h1','Bienvenue sur Todo List');
+        $this->assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+        $this->assertEquals(404, $client->getResponse()->getStatusCode());
 
     }
 }
