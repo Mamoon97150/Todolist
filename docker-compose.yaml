@@ -43,6 +43,19 @@ services:
         volumes:
             -   ./mysql:/var/lib/mysql
 
+    blackfire:
+        image: blackfire/blackfire:2
+        ports: ["8307"]
+        restart: always
+        environment:
+            BLACKFIRE_LOG_LEVEL: 4
+            BLACKFIRE_SERVER_ID: "$S_ID"
+            BLACKFIRE_SERVER_TOKEN: "$S_TOKEN"
+            BLACKFIRE_CLIENT_ID: "$C_ID"
+            BLACKFIRE_CLIENT_TOKEN: "$C_TOKEN"
+        networks:
+            dev:
+
 networks:
     dev:
 
